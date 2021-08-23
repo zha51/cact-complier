@@ -43,15 +43,19 @@ blockItem
     | stmt
     ;
 stmt 
-    : lVal '=' exp ';'                           #firstStmt
-    | (exp)? ';'                                 #secondStmt
-    | block                                      #thirdStmt
-    | 'if' '(' cond ')' stmt ('else' stmt )?     #fourthStmt
-    | 'while' '(' cond ')' stmt                  #fifthStmt
-    | 'break' ';'                                #sixthStmt
-    | 'continue' ';'                             #seventhStmt
-    | 'return' (exp)? ';'                        #eighthStmt
+    : lVal '=' exp ';'                                              #firstStmt
+    | (exp)? ';'                                                    #secondStmt
+    | block                                                         #thirdStmt
+    | 'if' '(' cond ')' stmt (cactElse stmt )?                      #fourthStmt
+    | 'while' '(' cond ')' stmt                                     #fifthStmt
+    | 'break' ';'                                                   #sixthStmt
+    | 'continue' ';'                                                #seventhStmt
+    | 'return' (exp)? ';'                                           #eighthStmt
     ;
+
+cactElse
+: ELSE
+;
 
 lVal
 locals[
@@ -79,10 +83,11 @@ locals[
     int  type,
     bool is_array,
     int returnNumber,
-    int boolType
+    int boolType,
+    bool is_number
 ]
     : mulExp                          #firstAddExp
-    | addExp ('+'|'-') mulExp         #secondAddExp
+    | addExp (Add|Sub) mulExp         #secondAddExp
     ;
 
 mulExp
@@ -91,10 +96,11 @@ locals[
     int  type,
     bool is_array,
     int returnNumber,
-    int boolType
+    int boolType,
+    bool is_number
 ]
     :unaryExp                                #firstMulExp
-    | mulExp ('*' | Divide | '%') unaryExp   #secondMulExp
+    | mulExp ( Mul | Divide | '%') unaryExp   #secondMulExp
     ;
 
 unaryExp
@@ -103,7 +109,8 @@ locals[
     int  type,
     bool is_array,
     int returnNumber,
-    int boolType
+    int boolType,
+    bool is_number
 ]
     : primaryExp                     #firstUnaryExp
     | Ident '(' (funcRParams)? ')'   #secondUnaryExp
@@ -114,7 +121,8 @@ primaryExp
 locals[
     int     size,
     int  type,
-    bool is_array
+    bool is_array,
+    bool is_number
 ]
     :'('exp')'                       #firstPrimaryExp
     | lVal                           #secondPrimaryExp
@@ -138,16 +146,16 @@ lOrExp
 locals[
         int boolType
     ]
-    : lAndExp 
-    | lOrExp '||' lAndExp
+    : lAndExp                         #firstlOrExp
+    | lOrExp '||' lAndExp             #secondlOrExp
     ;
 
 lAndExp
 locals[
         int boolType
     ]
-    :eqExp 
-    | lAndExp '&&' eqExp
+    :eqExp                            #firstlAndExp
+    | lAndExp '&&' eqExp              #secondlAndExp
     ;
 
 eqExp
@@ -157,8 +165,8 @@ locals[
     int  type,
     bool is_array
     ]
-    :relExp                                  #firstEqExp
-    | eqExp ('==' | '!=') relExp             #secondEqExp
+    :relExp                                       #firstEqExp
+    | eqExp ( Equal| NotEqual) relExp             #secondEqExp
     ;
 
 relExp
@@ -166,10 +174,11 @@ locals[
     int boolType,
     int    size,
     int  type,
-    bool is_array
+    bool is_array,
+    bool is_number
     ]
     : addExp                                     #firstRelExp       
-    | relExp ('<' | '>' | '<=' | '>=') addExp    #secondRelExp 
+    | relExp ( LESS | '>' | '<=' | '>=') addExp    #secondRelExp 
     | BoolConst                                  #thirdRelExp   
     ;
 
@@ -204,7 +213,8 @@ constDef
 
 constInitVal
     locals[
-        int basic_or_array_and_type
+        int basic_or_array_and_type,
+        bool is_number
     ]
     : constExp                      # firstConstInitVal
     | LeftBrace ( constExp ( ',' constExp )* )? RightBrace    # secondConstInitVal
@@ -228,6 +238,7 @@ varDef
 constExp
     locals[
         int basic_or_array_and_type,
+        bool is_number
     ]
     : number            #constExpNumber
     | BoolConst         #constExpBoolConst
@@ -254,6 +265,14 @@ RightBracket : ']';
 LeftBrace : '{';
 RightBrace : '}';
 Divide : '/';
+Add : '+';
+Sub : '-';
+Mul : '*';
+Equal : '==';
+NotEqual : '!=';
+ELSE :'else';
+LESS :'<';
+
 
 Ident
     : IdentNondigit [a-zA-Z_0-9]*

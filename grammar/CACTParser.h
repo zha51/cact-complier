@@ -19,22 +19,22 @@ public:
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
     T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, T__12 = 13, T__13 = 14, 
     T__14 = 15, T__15 = 16, T__16 = 17, T__17 = 18, T__18 = 19, T__19 = 20, 
-    T__20 = 21, T__21 = 22, T__22 = 23, T__23 = 24, T__24 = 25, T__25 = 26, 
-    T__26 = 27, T__27 = 28, T__28 = 29, T__29 = 30, BoolConst = 31, LeftBracket = 32, 
-    RightBracket = 33, LeftBrace = 34, RightBrace = 35, Divide = 36, Ident = 37, 
-    IntConst = 38, DoubleConst = 39, FloatConst = 40, NewLine = 41, WhiteSpace = 42, 
-    BlockComment = 43, LineComment = 44
+    T__20 = 21, T__21 = 22, T__22 = 23, BoolConst = 24, LeftBracket = 25, 
+    RightBracket = 26, LeftBrace = 27, RightBrace = 28, Divide = 29, Add = 30, 
+    Sub = 31, Mul = 32, Equal = 33, NotEqual = 34, ELSE = 35, LESS = 36, 
+    Ident = 37, IntConst = 38, DoubleConst = 39, FloatConst = 40, NewLine = 41, 
+    WhiteSpace = 42, BlockComment = 43, LineComment = 44
   };
 
   enum {
     RuleCompUnit = 0, RuleFuncDef = 1, RuleFuncType = 2, RuleFuncFParams = 3, 
     RuleFuncFParam = 4, RuleBlock = 5, RuleBlockItem = 6, RuleStmt = 7, 
-    RuleLVal = 8, RuleExp = 9, RuleAddExp = 10, RuleMulExp = 11, RuleUnaryExp = 12, 
-    RulePrimaryExp = 13, RuleUnaryOp = 14, RuleCond = 15, RuleLOrExp = 16, 
-    RuleLAndExp = 17, RuleEqExp = 18, RuleRelExp = 19, RuleFuncRParams = 20, 
-    RuleDecl = 21, RuleConstDecl = 22, RuleBType = 23, RuleConstDef = 24, 
-    RuleConstInitVal = 25, RuleVarDecl = 26, RuleVarDef = 27, RuleConstExp = 28, 
-    RuleNumber = 29
+    RuleCactElse = 8, RuleLVal = 9, RuleExp = 10, RuleAddExp = 11, RuleMulExp = 12, 
+    RuleUnaryExp = 13, RulePrimaryExp = 14, RuleUnaryOp = 15, RuleCond = 16, 
+    RuleLOrExp = 17, RuleLAndExp = 18, RuleEqExp = 19, RuleRelExp = 20, 
+    RuleFuncRParams = 21, RuleDecl = 22, RuleConstDecl = 23, RuleBType = 24, 
+    RuleConstDef = 25, RuleConstInitVal = 26, RuleVarDecl = 27, RuleVarDef = 28, 
+    RuleConstExp = 29, RuleNumber = 30
   };
 
   CACTParser(antlr4::TokenStream *input);
@@ -55,6 +55,7 @@ public:
   class BlockContext;
   class BlockItemContext;
   class StmtContext;
+  class CactElseContext;
   class LValContext;
   class ExpContext;
   class AddExpContext;
@@ -204,6 +205,7 @@ public:
     CondContext *cond();
     std::vector<StmtContext *> stmt();
     StmtContext* stmt(size_t i);
+    CactElseContext *cactElse();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
   };
@@ -273,6 +275,19 @@ public:
 
   StmtContext* stmt();
 
+  class  CactElseContext : public antlr4::ParserRuleContext {
+  public:
+    CactElseContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *ELSE();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  CactElseContext* cactElse();
+
   class  LValContext : public antlr4::ParserRuleContext {
   public:
     int size;
@@ -336,6 +351,7 @@ public:
     bool is_array;
     int returnNumber;
     int boolType;
+    bool is_number;
     AddExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
    
     AddExpContext() = default;
@@ -362,6 +378,8 @@ public:
 
     AddExpContext *addExp();
     MulExpContext *mulExp();
+    antlr4::tree::TerminalNode *Add();
+    antlr4::tree::TerminalNode *Sub();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
   };
@@ -375,6 +393,7 @@ public:
     bool is_array;
     int returnNumber;
     int boolType;
+    bool is_number;
     MulExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
    
     MulExpContext() = default;
@@ -401,6 +420,7 @@ public:
 
     MulExpContext *mulExp();
     UnaryExpContext *unaryExp();
+    antlr4::tree::TerminalNode *Mul();
     antlr4::tree::TerminalNode *Divide();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -415,6 +435,7 @@ public:
     bool is_array;
     int returnNumber;
     int boolType;
+    bool is_number;
     UnaryExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
    
     UnaryExpContext() = default;
@@ -462,6 +483,7 @@ public:
     int size;
     int type;
     bool is_array;
+    bool is_number;
     PrimaryExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
    
     PrimaryExpContext() = default;
@@ -506,6 +528,8 @@ public:
   public:
     UnaryOpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *Add();
+    antlr4::tree::TerminalNode *Sub();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -532,13 +556,33 @@ public:
   public:
     int boolType;
     LOrExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    LAndExpContext *lAndExp();
-    LOrExpContext *lOrExp();
+   
+    LOrExpContext() = default;
+    void copyFrom(LOrExpContext *context);
+    using antlr4::ParserRuleContext::copyFrom;
 
+    virtual size_t getRuleIndex() const override;
+
+   
+  };
+
+  class  FirstlOrExpContext : public LOrExpContext {
+  public:
+    FirstlOrExpContext(LOrExpContext *ctx);
+
+    LAndExpContext *lAndExp();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
+  };
+
+  class  SecondlOrExpContext : public LOrExpContext {
+  public:
+    SecondlOrExpContext(LOrExpContext *ctx);
+
+    LOrExpContext *lOrExp();
+    LAndExpContext *lAndExp();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
   };
 
   LOrExpContext* lOrExp();
@@ -547,13 +591,33 @@ public:
   public:
     int boolType;
     LAndExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    EqExpContext *eqExp();
-    LAndExpContext *lAndExp();
+   
+    LAndExpContext() = default;
+    void copyFrom(LAndExpContext *context);
+    using antlr4::ParserRuleContext::copyFrom;
 
+    virtual size_t getRuleIndex() const override;
+
+   
+  };
+
+  class  FirstlAndExpContext : public LAndExpContext {
+  public:
+    FirstlAndExpContext(LAndExpContext *ctx);
+
+    EqExpContext *eqExp();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
+  };
+
+  class  SecondlAndExpContext : public LAndExpContext {
+  public:
+    SecondlAndExpContext(LAndExpContext *ctx);
+
+    LAndExpContext *lAndExp();
+    EqExpContext *eqExp();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
   };
 
   LAndExpContext* lAndExp();
@@ -590,6 +654,8 @@ public:
 
     EqExpContext *eqExp();
     RelExpContext *relExp();
+    antlr4::tree::TerminalNode *Equal();
+    antlr4::tree::TerminalNode *NotEqual();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
   };
@@ -602,6 +668,7 @@ public:
     int size;
     int type;
     bool is_array;
+    bool is_number;
     RelExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
    
     RelExpContext() = default;
@@ -619,6 +686,7 @@ public:
 
     RelExpContext *relExp();
     AddExpContext *addExp();
+    antlr4::tree::TerminalNode *LESS();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
   };
@@ -719,6 +787,7 @@ public:
   class  ConstInitValContext : public antlr4::ParserRuleContext {
   public:
     int basic_or_array_and_type;
+    bool is_number;
     ConstInitValContext(antlr4::ParserRuleContext *parent, size_t invokingState);
    
     ConstInitValContext() = default;
@@ -813,6 +882,7 @@ public:
   class  ConstExpContext : public antlr4::ParserRuleContext {
   public:
     int basic_or_array_and_type;
+    bool is_number;
     ConstExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
    
     ConstExpContext() = default;

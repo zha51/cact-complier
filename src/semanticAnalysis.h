@@ -8,12 +8,14 @@
 #include<algorithm>
 #include<stdlib.h>
 #include<time.h>
+#include <stack>
 
 using namespace std;
 
 #define INT_TYPE 1
 #define FLOAT_TYPE 2
 #define DOUBLE_TYPE 3
+
 
 class SemanticAnalysis : public CACTBaseListener
 {
@@ -76,6 +78,72 @@ std::vector<string> ConstVector;     //定义一个临时vector，存储花括�
 
 std::vector<string> * pconst;       //定义一个常量vector的指针
 
+typedef struct                  //创建一个四元式
+{   
+   string   name;              //新建name方便对四元式进行操作
+   string    op;
+   string    arg1;
+   string    arg2;
+   string    result;
+}Quaternion; 
+
+std::vector<Quaternion> QuaternionVector ;    //定义一个四元式的vector
+std::vector<Quaternion> * PQuaternion ;        //定义四元式的指针
+stack<std::vector<Quaternion> *> QuaternionStack ; //将四元式存入栈中，解决定义域问题
+
+std::vector<string> OutputVector;   //定义一个输出vector
+std::vector<string> * POutput;
+
+string  v_global()    //设置全局变量解决vi变量问题
+{
+    static int count = 0 ;
+    count++;
+    char c[100];
+    sprintf(c, "%d", count);
+    string  i(c);
+    string vglo1= "v";
+    string vglo2= i;
+    string vglo = vglo1+vglo2;
+    return vglo;
+}
+
+string t_global()      //Ti
+{
+    static int count = 0 ;
+    count++;
+    char c[100];
+    sprintf(c, "%d", count);
+    string j(c);
+    string tglo1= "t";
+    string tglo2= j;
+    string tglo = tglo1+tglo2;
+    return tglo;
+}
+
+string new_label()       //创建一个新的label i
+{
+    static int count = 0;
+    count++;
+    char c[100];
+    sprintf(c, "%d", count);
+    string j(c);
+    string lglo1= "label";
+    string lglo2= j;
+    string lglo = lglo1+lglo2;
+    return lglo;
+}
+
+typedef struct               //定义有一个label结构体，存储if、else信息
+{
+    string   name;
+    int      times;
+    string   label; 
+}Label;
+
+std::vector<Label> LabelVector ;    //定义一个label的vector
+std::vector<Label> *PLabel ;        //labelvector的指针
+
+
  void enterCompUnit(CACTParser::CompUnitContext * /*ctx*/) override;
  void exitCompUnit(CACTParser::CompUnitContext * /*ctx*/) override;
 
@@ -106,13 +174,13 @@ std::vector<string> * pconst;       //定义一个常量vector的指针
    void enterSecondStmt(CACTParser::SecondStmtContext * /*ctx*/) override { }
    void exitSecondStmt(CACTParser::SecondStmtContext * /*ctx*/) override { }
 
-   void enterThirdStmt(CACTParser::ThirdStmtContext * /*ctx*/) override { }
-   void exitThirdStmt(CACTParser::ThirdStmtContext * /*ctx*/) override { }
+   void enterThirdStmt(CACTParser::ThirdStmtContext * /*ctx*/) override;
+   void exitThirdStmt(CACTParser::ThirdStmtContext * /*ctx*/) override  { }
 
-   void enterFourthStmt(CACTParser::FourthStmtContext * /*ctx*/) override { }
+   void enterFourthStmt(CACTParser::FourthStmtContext * /*ctx*/) override;
    void exitFourthStmt(CACTParser::FourthStmtContext * /*ctx*/) override;
 
-   void enterFifthStmt(CACTParser::FifthStmtContext * /*ctx*/) override{  }
+   void enterFifthStmt(CACTParser::FifthStmtContext * /*ctx*/) override;
    void exitFifthStmt(CACTParser::FifthStmtContext * /*ctx*/) override;
 
    void enterSixthStmt(CACTParser::SixthStmtContext * /*ctx*/) override { }
@@ -186,11 +254,23 @@ std::vector<string> * pconst;       //定义一个常量vector的指针
    void enterCond(CACTParser::CondContext * /*ctx*/) override { }
    void exitCond(CACTParser::CondContext * /*ctx*/) override;
 
-   void enterLOrExp(CACTParser::LOrExpContext * /*ctx*/) override { }
-   void exitLOrExp(CACTParser::LOrExpContext * /*ctx*/) override;
+   //void enterLOrExp(CACTParser::LOrExpContext * /*ctx*/) override { }
+   //void exitLOrExp(CACTParser::LOrExpContext * /*ctx*/) override;
 
-   void enterLAndExp(CACTParser::LAndExpContext * /*ctx*/) override { }
-   void exitLAndExp(CACTParser::LAndExpContext * /*ctx*/) override;
+   void enterFirstlOrExp(CACTParser::FirstlOrExpContext * /*ctx*/) override { }
+   void exitFirstlOrExp(CACTParser::FirstlOrExpContext * /*ctx*/) override;
+
+   void enterSecondlOrExp(CACTParser::SecondlOrExpContext * /*ctx*/) override { }
+   void exitSecondlOrExp(CACTParser::SecondlOrExpContext * /*ctx*/) override { }
+
+   void enterFirstlAndExp(CACTParser::FirstlAndExpContext * /*ctx*/) override { }
+   void exitFirstlAndExp(CACTParser::FirstlAndExpContext * /*ctx*/) override;
+
+   void enterSecondlAndExp(CACTParser::SecondlAndExpContext * /*ctx*/) override { }
+  void exitSecondlAndExp(CACTParser::SecondlAndExpContext * /*ctx*/) override { }
+
+   //void enterLAndExp(CACTParser::LAndExpContext * /*ctx*/) override { }
+   //void exitLAndExp(CACTParser::LAndExpContext * /*ctx*/) override;
 
    //void enterEqExp(CACTParser::EqExpContext * /*ctx*/) override { }
    //void exitEqExp(CACTParser::EqExpContext * /*ctx*/) override;
@@ -226,7 +306,7 @@ std::vector<string> * pconst;       //定义一个常量vector的指针
    void exitBType(CACTParser::BTypeContext * /*ctx*/) override { }
 
     void enterConstDef(CACTParser::ConstDefContext * /*ctx*/) override;
-    void exitConstDef(CACTParser::ConstDefContext * /*ctx*/) override{ }
+    void exitConstDef(CACTParser::ConstDefContext * /*ctx*/) override;
 
   // void enterConstInitVal(CACTParser::ConstInitValContext * /*ctx*/) override { }
   // void exitConstInitVal(CACTParser::ConstInitValContext * /*ctx*/) override { }
@@ -241,7 +321,7 @@ std::vector<string> * pconst;       //定义一个常量vector的指针
    void exitArrayVarDef(CACTParser::ArrayVarDefContext * /*ctx*/) override;
 
    void enterConstExpNumber(CACTParser::ConstExpNumberContext * /*ctx*/) override { }
-   void exitConstExpNumber(CACTParser::ConstExpNumberContext * /*ctx*/) override { }
+   void exitConstExpNumber(CACTParser::ConstExpNumberContext * /*ctx*/) override;
 
    void enterConstExpBoolConst(CACTParser::ConstExpBoolConstContext * /*ctx*/) override { }
    void exitConstExpBoolConst(CACTParser::ConstExpBoolConstContext * /*ctx*/) override { }
@@ -249,10 +329,10 @@ std::vector<string> * pconst;       //定义一个常量vector的指针
    void enterNumber(CACTParser::NumberContext * /*ctx*/) override { }
    void exitNumber(CACTParser::NumberContext * /*ctx*/) override ;
 
-  void enterFirstConstInitVal(CACTParser::FirstConstInitValContext * /*ctx*/) override { }
-   void exitFirstConstInitVal(CACTParser::FirstConstInitValContext * /*ctx*/) override { }
+   void enterFirstConstInitVal(CACTParser::FirstConstInitValContext * /*ctx*/) override { }
+   void exitFirstConstInitVal(CACTParser::FirstConstInitValContext * /*ctx*/) override;
 
-  void enterSecondConstInitVal(CACTParser::SecondConstInitValContext * /*ctx*/) override { }
+   void enterSecondConstInitVal(CACTParser::SecondConstInitValContext * /*ctx*/) override { }
    void exitSecondConstInitVal(CACTParser::SecondConstInitValContext * /*ctx*/) override { }
 
     void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }
@@ -261,6 +341,8 @@ std::vector<string> * pconst;       //定义一个常量vector的指针
     void visitTerminal(antlr4::tree::TerminalNode * /*node*/) override { }
     void visitErrorNode(antlr4::tree::ErrorNode * /*node*/) override { }
 
+    void enterCactElse(CACTParser::CactElseContext * /*ctx*/) override;
+    void exitCactElse(CACTParser::CactElseContext * /*ctx*/) override;
 
     
 };

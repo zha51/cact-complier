@@ -65,6 +65,9 @@ public:
   virtual void enterEighthStmt(CACTParser::EighthStmtContext * /*ctx*/) override { }
   virtual void exitEighthStmt(CACTParser::EighthStmtContext * /*ctx*/) override { }
 
+  virtual void enterCactElse(CACTParser::CactElseContext * /*ctx*/) override { }
+  virtual void exitCactElse(CACTParser::CactElseContext * /*ctx*/) override { }
+
   virtual void enterLVal(CACTParser::LValContext * /*ctx*/) override { }
   virtual void exitLVal(CACTParser::LValContext * /*ctx*/) override { }
 
@@ -110,11 +113,17 @@ public:
   virtual void enterCond(CACTParser::CondContext * /*ctx*/) override { }
   virtual void exitCond(CACTParser::CondContext * /*ctx*/) override { }
 
-  virtual void enterLOrExp(CACTParser::LOrExpContext * /*ctx*/) override { }
-  virtual void exitLOrExp(CACTParser::LOrExpContext * /*ctx*/) override { }
+  virtual void enterFirstlOrExp(CACTParser::FirstlOrExpContext * /*ctx*/) override { }
+  virtual void exitFirstlOrExp(CACTParser::FirstlOrExpContext * /*ctx*/) override { }
 
-  virtual void enterLAndExp(CACTParser::LAndExpContext * /*ctx*/) override { }
-  virtual void exitLAndExp(CACTParser::LAndExpContext * /*ctx*/) override { }
+  virtual void enterSecondlOrExp(CACTParser::SecondlOrExpContext * /*ctx*/) override { }
+  virtual void exitSecondlOrExp(CACTParser::SecondlOrExpContext * /*ctx*/) override { }
+
+  virtual void enterFirstlAndExp(CACTParser::FirstlAndExpContext * /*ctx*/) override { }
+  virtual void exitFirstlAndExp(CACTParser::FirstlAndExpContext * /*ctx*/) override { }
+
+  virtual void enterSecondlAndExp(CACTParser::SecondlAndExpContext * /*ctx*/) override { }
+  virtual void exitSecondlAndExp(CACTParser::SecondlAndExpContext * /*ctx*/) override { }
 
   virtual void enterFirstEqExp(CACTParser::FirstEqExpContext * /*ctx*/) override { }
   virtual void exitFirstEqExp(CACTParser::FirstEqExpContext * /*ctx*/) override { }
