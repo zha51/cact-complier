@@ -1,4 +1,4 @@
-#pragma
+#pragma once
 
 #include "../grammar/CACTBaseListener.h"
 #include <stdio.h>
@@ -143,6 +143,7 @@ typedef struct               //定义有一个label结构体，存储if、else�
 std::vector<Label> LabelVector ;    //定义一个label的vector
 std::vector<Label> *PLabel ;        //labelvector的指针
 
+ vector<string>  printIr(); 
 
  void enterCompUnit(CACTParser::CompUnitContext * /*ctx*/) override;
  void exitCompUnit(CACTParser::CompUnitContext * /*ctx*/) override;

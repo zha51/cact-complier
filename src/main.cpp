@@ -7,6 +7,7 @@
 #include "MyErrorListener.h"
 
 #include "semanticAnalysis.h"
+#include "codeGen.h"
 
 using namespace antlr4;
 
@@ -29,8 +30,9 @@ int main(int argc, const char* argv[]) {
     tree::ParseTree *tree = parser.compUnit();
     SemanticAnalysis listener;
     tree::ParseTreeWalker::DEFAULT.walk(&listener, tree);
+    vector<string> IrVector = listener.printIr();
 
-    
+    CodeGen codegen(IrVector);
 
 
     std::cout << "-------------------------Print AST:--------------------------" << std::endl;

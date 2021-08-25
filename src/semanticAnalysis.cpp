@@ -2020,5 +2020,9 @@ void SemanticAnalysis::exitCactElse(CACTParser::CactElseContext * ctx)
  void SemanticAnalysis::enterThirdStmt(CACTParser::ThirdStmtContext * ctx)
  { 
      
+ }
 
+ vector<string>  SemanticAnalysis::printIr()
+ {
+    return (*POutput);
  }
